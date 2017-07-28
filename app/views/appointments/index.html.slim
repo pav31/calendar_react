@@ -1,12 +1,5 @@
-/= react_component 'Appointments'
-
 h1 React Calendar
 
 h2 Appointments
 
-h3 Make a new appointment
-
-= render 'form'
-
-#appointments
-  = render 'appointments'
+= react_component('Appointments', appointments: @appointments)
