@@ -1,9 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
+Ruby on Rails + ReactJS calendar application.
 
 * Ruby version
 
@@ -21,4 +18,6 @@ Things you may want to cover:
 
 * Deployment instructions
 
-* ...
+* Credits
+
+Big props to Hrishi Mittal for making such a great tutorial! https://learnetto.com/
