@@ -37,7 +37,7 @@ var AppointmentForm = React.createClass({
                               value={this.props.appt_time}
                               onChange={this.setApptTime}
                     />
-                    <input type="submit" value="Create" />
+                    <input type="submit" value="Create" className="submit-button" />
                 </form>
             </div>
         )
