@@ -1,5 +1,10 @@
-class Appointments extends React.Component {
-    constructor(props) {
+import React from 'react';
+import AppointmentForm from './appointment_form';
+import { AppointmentsList } from './appointments_list';
+import update from 'immutability-helper';
+
+export default class Appointments extends React.Component {
+    constructor (props, _railsContext) {
         super(props);
         this.state = {
             appointments: this.props.appointments,
@@ -13,10 +18,7 @@ class Appointments extends React.Component {
     }
 
     handleFormSubmit () {
-        const appointment = {
-            title: this.state.title,
-            appt_time: this.state.appt_time
-        };
+        const appointment = {title: this.state.title, appt_time: this.state.appt_time};
         $.post('/appointments',
             {appointment: appointment})
             .done((data) => {
@@ -25,10 +27,9 @@ class Appointments extends React.Component {
     }
 
     addNewAppointment (appointment) {
-        //TODO Read about react addons
-        const appointments = React.addons.update(this.state.appointments, { $push: [appointment] });
+        const appointments = update(this.state.appointments, { $push: [appointment]});
         this.setState({
-            appointments: appointments.sort(function(a,b) {
+            appointments: appointments.sort(function(a, b) {
                 return new Date(a.appt_time) - new Date(b.appt_time);
             })
         });
@@ -40,10 +41,9 @@ class Appointments extends React.Component {
                 <AppointmentForm title={this.state.title}
                                  appt_time={this.state.appt_time}
                                  onUserInput={(obj) => this.handleUserInput(obj)}
-                                 onFormSubmit={() => this.handleFormSubmit()}
-                />
-                <AppointmentsList appointments={this.state.appointments}/>
+                                 onFormSubmit={() => this.handleFormSubmit()} />
 
+                <AppointmentsList appointments={this.state.appointments} />
             </div>
         )
     }
