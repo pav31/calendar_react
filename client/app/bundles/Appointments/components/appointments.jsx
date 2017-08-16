@@ -1,7 +1,7 @@
 import React from 'react';
-import AppointmentForm from './appointment_form';
-import { AppointmentsList } from './appointments_list';
 import update from 'immutability-helper';
+import AppointmentForm from './AppointmentForm';
+import { AppointmentsList } from './AppointmentsList';
 import { FormErrors } from './FormErrors';
 
 export default class Appointments extends React.Component {
@@ -16,7 +16,7 @@ export default class Appointments extends React.Component {
         }
     }
 
-    handleUserInput (obj) {
+    handleUserInput = (obj) => {
         this.setState(obj, this.validateForm);
     }
 
@@ -25,7 +25,7 @@ export default class Appointments extends React.Component {
             formValid: this.state.title.trim().length > 2})
     }
 
-    handleFormSubmit () {
+    handleFormSubmit = () => {
         const appointment = {title: this.state.title, appt_time: this.state.appt_time};
         $.post('/appointments',
             {appointment: appointment})
@@ -59,8 +59,8 @@ export default class Appointments extends React.Component {
                 <AppointmentForm title={this.state.title}
                                  appt_time={this.state.appt_time}
                                  formValid={this.state.formValid}
-                                 onUserInput={(obj) => this.handleUserInput(obj)}
-                                 onFormSubmit={() => this.handleFormSubmit()} />
+                                 onUserInput={this.handleUserInput}
+                                 onFormSubmit={this.handleFormSubmit} />
 
                 <AppointmentsList appointments={this.state.appointments} />
             </div>
