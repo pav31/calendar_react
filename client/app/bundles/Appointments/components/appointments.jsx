@@ -11,12 +11,18 @@ export default class Appointments extends React.Component {
             appointments: this.props.appointments,
             title: 'Team standup meeting',
             appt_time: '',
+            formValid: true,
             formErrors: {}
         }
     }
 
     handleUserInput (obj) {
-        this.setState(obj);
+        this.setState(obj, this.validateForm);
+    }
+
+    validateForm () {
+        this.setState({
+            formValid: this.state.title.trim().length > 2})
     }
 
     handleFormSubmit () {
@@ -52,6 +58,7 @@ export default class Appointments extends React.Component {
                 <FormErrors formErrors={this.state.formErrors} />
                 <AppointmentForm title={this.state.title}
                                  appt_time={this.state.appt_time}
+                                 formValid={this.state.formValid}
                                  onUserInput={(obj) => this.handleUserInput(obj)}
                                  onFormSubmit={() => this.handleFormSubmit()} />
 
