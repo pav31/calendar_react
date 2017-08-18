@@ -17,34 +17,26 @@ export default class Appointments extends React.Component {
         }
     }
 
-    handleUserInput = (fieldName, fieldValue) => {
+    handleUserInput = (fieldName, fieldValue, validations) => {
         const newFieldState = update(this.state[fieldName],
                                      {value: {$set: fieldValue}});
 
         this.setState({[fieldName]: newFieldState},
-                      () => { this.validateField(fieldName, fieldValue) });
+                      () => { this.validateField(fieldName, fieldValue, validations) });
     }
 
-    validateField (fieldName, fieldValue) {
+    validateField (fieldName, fieldValue, validations) {
         let fieldValid;
-        let fieldErrors = [];
-        switch (fieldName) {
-            case 'title':
-                fieldValid = this.state.title.value.trim().length > 2;
-                if(!fieldValid) {
-                    fieldErrors = [' should be at least 3 characters long'];
-                }
-                break;
-            case 'appt_time':
-                fieldValid = moment(this.state.appt_time.value).isValid() &&
-                             moment(this.state.appt_time.value).isAfter();
-                if(!fieldValid) {
-                    fieldErrors = [' should not be in the past'];
-                }
-                break;
-            default:
-                break;
-        }
+        let fieldErrors = validations.reduce((errors, v) => {
+            let e = v(fieldValue);
+            if(e != '') {
+                errors.push(e);
+            }
+            return(errors);
+        }, []);
+
+        fieldValid = fieldErrors.length === 0;
+
         const newFieldState = update(this.state[fieldName],
                                      {valid: {$set: fieldValid}});
         const newFormErrors = update(this.state.formErrors,
@@ -60,8 +52,8 @@ export default class Appointments extends React.Component {
     }
 
     handleFormSubmit = () => {
-        const appointment = {title: this.state.title,
-                             appt_time: this.state.appt_time};
+        const appointment = {title: this.state.title.value,
+                             appt_time: this.state.appt_time.value};
         $.post('/appointments',
             {appointment: appointment})
             .done((data) => {
