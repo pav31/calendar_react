@@ -55,13 +55,13 @@ export default class AppointmentForm extends React.Component {
                 <form onSubmit={(event) => this.handleSubmit(event)}>
                     <input name='title'
                            placeholder='Appointment Title'
-                           value={this.props.title}
+                           value={this.props.title.value}
                            onChange={this.handleChange} />
 
                     <Datetime input={false}
                               open={true}
                               inputProps={inputProps}
-                              value={moment(this.props.appt_time)}
+                              value={moment(this.props.appt_time.value)}
                               onChange={this.setApptTime} />
 
                     <input type='submit' value='Make Appointment'
