@@ -14,7 +14,8 @@ export default class AppointmentForm extends React.Component {
         super(props);
         this.state = {
             title: {value: '', valid: false},
-            appt_time: {value: new Date(), valid: false}, // fixme: fix value undefined
+            appt_time: {value: new Date(), valid: false},
+            editing: false,
             formValid: false,
             formErrors: {}
         }
@@ -27,6 +28,22 @@ export default class AppointmentForm extends React.Component {
         appt_time: [
             (t) => { return(validations.timeShouldBeInTheFuture(t)) }
         ]
+    }
+
+    componentDidMount () {
+        if(this.props.match) {
+            $.ajax({
+                type: 'GET',
+                url: `/appointments/${this.props.match.params.id}`,
+                dataType: 'JSON'
+            }).done((data) => {
+                this.setState({
+                    title: {value: data.title, valid: true},
+                    appt_time: {value: data.appt_time, valid: true},
+                    editing: this.props.match.path === '/appointments/:id/edit'
+                });
+            });
+        }
     }
 
     handleUserInput = (fieldName, fieldValue, validations) => {
@@ -65,7 +82,32 @@ export default class AppointmentForm extends React.Component {
 
     handleFormSubmit = (e) => {
         e.preventDefault();
+        this.state.editing ?
+            this.updateAppointment() :
+            this.addAppointment();
+    }
 
+    updateAppointment () {
+        const appointment = {title: this.state.title.value,
+            appt_time: this.state.appt_time.value};
+        $.ajax({
+            type: "PATCH",
+            url: `/appointments/${this.props.match.params.id}`,
+            data: {appointment: appointment}
+        })
+        .done((data) => {
+            console.log('appointment updated!');
+            this.resetFormErrors();
+        })
+        .fail((response) => {
+            this.setState({
+                formErrors: response.responseJSON,
+                formValid: false
+            });
+        });
+    }
+
+    addAppointment () {
         const appointment = {title: this.state.title.value,
             appt_time: this.state.appt_time.value};
         $.post('/appointments',
@@ -75,8 +117,10 @@ export default class AppointmentForm extends React.Component {
                 this.resetFormErrors();
             })
             .fail((response) => {
-                this.setState({formErrors: response.responseJSON});
-                console.log(response);
+                this.setState({
+                    formErrors: response.responseJSON,
+                    formValid: false
+                });
             });
     }
 
@@ -103,7 +147,13 @@ export default class AppointmentForm extends React.Component {
 
         return (
             <div>
-                <h2>Make a new appointment</h2>
+                <h2>
+                    {
+                        this.state.editing ?
+                            'Update appointment' :
+                            'Make a new appointment'
+                    }
+                </h2>
                 <FormErrors formErrors={this.state.formErrors} />
                 <form onSubmit={(event) => this.handleFormSubmit(event)}>
                     <input name='title'
@@ -117,7 +167,7 @@ export default class AppointmentForm extends React.Component {
                               value={moment(this.state.appt_time.value)}
                               onChange={this.setApptTime} />
 
-                    <input type='submit' value='Make Appointment'
+                    <input type='submit' value={this.state.editing ? 'Update Appointment' : 'Make Appointment'}
                            className='submit-button'
                            disabled={!this.state.formValid} />
                 </form>
@@ -125,9 +175,3 @@ export default class AppointmentForm extends React.Component {
         )
     }
 }
-
-//title={this.state.title.value}
-//appt_time={this.state.appt_time.value}
-//formValid={this.state.formValid}
-//onUserInput={this.handleUserInput}
-//onFormSubmit={this.handleFormSubmit}

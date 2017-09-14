@@ -13,3 +13,7 @@ export const AppointmentsList = ({appointments}) =>
 AppointmentsList.propTypes = {
     appointments: PropTypes.array.isRequired
 }
+
+AppointmentsList.defaultProps = {
+    appointments: []
+}
