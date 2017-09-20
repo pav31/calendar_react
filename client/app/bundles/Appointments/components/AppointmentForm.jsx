@@ -124,6 +124,34 @@ export default class AppointmentForm extends React.Component {
             });
     }
 
+    deleteAppointment = ()=> {
+        if(confirm("Are you sure you want to delete this appointment?")) {
+            $.ajax({
+                type: "DELETE",
+                url: `/appointments/${this.props.match.params.id}`
+            })
+            .done((data) => {
+                this.props.history.push('/');
+                this.resetFormErrors();
+            })
+            .fail((response) => {
+                console.log('appointment deleting failed!');
+            });
+
+        }
+        $.ajax({
+            type: "DELETE",
+            url: `/appointments/${this.props.match.params.id}`
+        })
+        .done((data) => {
+            this.props.history.push('/');
+            this.resetFormErrors();
+        })
+        .fail((response) => {
+            console.log('appointment deleting failed!');
+        });
+    }
+
     resetFormErrors () {
         this.setState({formErrors: {}});
     }
@@ -171,6 +199,13 @@ export default class AppointmentForm extends React.Component {
                            className='submit-button'
                            disabled={!this.state.formValid} />
                 </form>
+                {this.state.editing && (
+                    <p>
+                        <button onClick={this.deleteAppointment}>
+                            Delete appointment
+                        </button>
+                    </p>
+                )}
             </div>
         )
     }
